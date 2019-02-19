@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CrystalQuartz.AspNetCore;
+using CrystalQuartz.Core.SchedulerProviders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,8 +43,14 @@ namespace CqSamples.Quartz3.AspNetCore.Simple
 
             app.UseStaticFiles();
 
-            var scheduler = CreateScheduler();
-            app.UseCrystalQuartz(() => scheduler);
+            //var scheduler = CreateScheduler();
+            //app.UseCrystalQuartz(() => scheduler);
+
+
+            app.UseCrystalQuartz(new RemoteSchedulerProvider
+            {
+                SchedulerHost = "tcp://localhost:555/QuartzScheduler"
+            });
 
             app.UseMvc(routes =>
             {
