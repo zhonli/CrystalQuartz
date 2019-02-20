@@ -43,14 +43,15 @@ namespace CqSamples.Quartz3.AspNetCore.Simple
 
             app.UseStaticFiles();
 
-            //var scheduler = CreateScheduler();
-            //app.UseCrystalQuartz(() => scheduler);
+            var scheduler = CreateScheduler();
+            app.UseCrystalQuartz(() => scheduler);
 
-
+            /*
             app.UseCrystalQuartz(new RemoteSchedulerProvider
             {
                 SchedulerHost = "tcp://localhost:555/QuartzScheduler"
             });
+            */
 
             app.UseMvc(routes =>
             {

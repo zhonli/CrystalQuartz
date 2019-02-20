@@ -28,7 +28,7 @@
         protected override void RegisterTasks()
         {
             var merged = _configuration + "_Merged";
-
+            /*
             Task(
                 "Generate simple package spec",
                 new GenerateNuGetSpecTask(_solution.Artifacts / "CrystalQuartz.Simple.nuspec")
@@ -73,7 +73,7 @@
                         new TargetedFile(_solution.Artifacts/"bin_452"/merged/"CrystalQuartz.Owin.dll", "net452"))
                     
                     .Description("Installs CrystalQuartz panel (pluggable Qurtz.NET viewer) to any application (web or self-hosted) that uses OWIN environment."));
-            
+            */
             Task(
                 "Generate AspNet core package spec",
                 new GenerateNuGetSpecTask(_solution.Artifacts/"CrystalQuartz.AspNetCore.nuspec")

@@ -103,6 +103,7 @@ namespace CrystalQuartz.Build.Tasks
 
         protected override void RegisterTasks()
         {
+            /*
             Task(
                 "MergeSystemWeb400",
                 CreateMergeTask("CrystalQuartz.Web.dll", _webAssemblies400, "400"));
@@ -118,7 +119,7 @@ namespace CrystalQuartz.Build.Tasks
             Task(
                 "MergeOwin452",
                 CreateMergeTask("CrystalQuartz.Owin.dll", _owinAssemblies452, "452"));
-
+            */
             var resolveCoreLibs = Task(
                 "resolve Core Libs",
                 context =>

@@ -236,7 +236,9 @@ namespace CrystalQuartz.Build
                 return "msbuild";
             }
 
-            return base.GetToolPath(context);
+            var toolPath = "C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/15.0/Bin/MsBuild.exe";
+            return toolPath;
+            //return base.GetToolPath(context);
         }
     }
 }
