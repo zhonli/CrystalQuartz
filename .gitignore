@@ -178,3 +178,4 @@ artifacts/
 /src/CrystalQuartz.Application.Client/node_modules/**/*.*
 /src/CrystalQuartz.Application.Client/dist-dev-server/**/*.*
 .idea
+/src/Demo.Quartz3.DotNetCore/wwwroot/lib/
