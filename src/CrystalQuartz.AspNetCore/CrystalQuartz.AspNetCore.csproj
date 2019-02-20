@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CrystalQuartz.Application\CrystalQuartz.Application.csproj" />
-    <ProjectReference Include="..\CrystalQuartz.Core.Quartz2\CrystalQuartz.Core.Quartz2.csproj" />
     <ProjectReference Include="..\CrystalQuartz.Core.Quartz3\CrystalQuartz.Core.Quartz3.csproj" />
     <ProjectReference Include="..\CrystalQuartz.Core\CrystalQuartz.Core.csproj" />
     <ProjectReference Include="..\CrystalQuartz.WebFramework\CrystalQuartz.WebFramework.csproj" />

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CrystalQuartz.Core.Quartz2</RootNamespace>
     <AssemblyName>CrystalQuartz.Core.Quartz2</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <RestorePackages>true</RestorePackages>
@@ -73,9 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="job_scheduling_data_2_0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
