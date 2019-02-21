@@ -37,14 +37,7 @@ namespace Demo.Quartz3.DotNetCore
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
-            app.UseStaticFiles();
 
             var scheduler = CreateScheduler();
 
@@ -67,12 +60,7 @@ namespace Demo.Quartz3.DotNetCore
                     
                 });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
 
         private IScheduler CreateScheduler()

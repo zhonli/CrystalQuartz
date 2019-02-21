@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalQuartz.Application",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{609AECA9-C389-40C0-A91F-3930932245C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalQuartz.Application.Client", "CrystalQuartz.Application.Client\CrystalQuartz.Application.Client.csproj", "{8C0AD5DD-FB27-4A1A-BBA9-90DB20A38956}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{8244CE2C-F911-44F6-B8E3-3E1464FF992D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalQuartz.Core.Quartz3", "CrystalQuartz.Core.Quartz3\CrystalQuartz.Core.Quartz3.csproj", "{EBB78F2E-D6BE-4C4E-8C14-06AF89ED67FF}"
@@ -58,8 +56,6 @@ Global
 		{8F24D6F7-7AC8-4414-934C-F790243952A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F24D6F7-7AC8-4414-934C-F790243952A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F24D6F7-7AC8-4414-934C-F790243952A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C0AD5DD-FB27-4A1A-BBA9-90DB20A38956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C0AD5DD-FB27-4A1A-BBA9-90DB20A38956}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBB78F2E-D6BE-4C4E-8C14-06AF89ED67FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBB78F2E-D6BE-4C4E-8C14-06AF89ED67FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBB78F2E-D6BE-4C4E-8C14-06AF89ED67FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
