@@ -11,13 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalQuartz.Core.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalQuartz.Build", "CrystalQuartz.Build\CrystalQuartz.Build.csproj", "{EBD232D1-39BA-41AE-9D20-CA3187D6351D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{79E1569A-3B34-42C1-835D-9A15B4CE6E7F}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebFramework", "WebFramework", "{C71EB29F-604D-4AD9-8F33-DCFE203689A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalQuartz.Application", "CrystalQuartz.Application\CrystalQuartz.Application.csproj", "{8F24D6F7-7AC8-4414-934C-F790243952A2}"
