@@ -33,7 +33,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrystalQuartz.Core.Quartz2\CrystalQuartz.Core.Quartz2.csproj" />
     <ProjectReference Include="..\CrystalQuartz.Core\CrystalQuartz.Core.csproj" />
   </ItemGroup>
 </Project>
