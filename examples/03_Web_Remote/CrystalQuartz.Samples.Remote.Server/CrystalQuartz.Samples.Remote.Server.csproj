@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{0BB8D935-8758-4667-91F2-63F7D2C70A1F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CrystalQuartz.Samples.OwinRemote.Server</RootNamespace>
+    <AssemblyName>CrystalQuartz.Samples.OwinRemote.Server</AssemblyName>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyTitle>CrystalQuartz.Samples.OwinRemote.Server</AssemblyTitle>
+    <Product>CrystalQuartz.Samples.OwinRemote.Server</Product>
+    <Copyright>Copyright ©  2016</Copyright>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CrystalQuarts.Samples.Common\CrystalQuarts.Samples.Common.csproj" />
+  </ItemGroup>
+</Project>

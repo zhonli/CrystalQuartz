@@ -30,7 +30,7 @@
             properties["quartz.scheduler.exporter.channelType"] = "tcp";
 
             var schedulerFactory = new StdSchedulerFactory(properties);
-            var scheduler = schedulerFactory.GetScheduler();
+            var scheduler = schedulerFactory.GetScheduler().GetAwaiter().GetResult();
 
             var map = new JobDataMap();
             map.Put("msg", "Some message!");
