@@ -40,7 +40,7 @@ namespace Demo.Quartz3.DotNetCore
             }
 
             var scheduler = CreateScheduler();
-
+            
             app.UseCrystalQuartz(
                 () => scheduler, 
                 new CrystalQuartzOptions
@@ -60,6 +60,7 @@ namespace Demo.Quartz3.DotNetCore
                     
                 });
 
+            app.UseStaticFiles();
             app.UseMvc();
         }
 
