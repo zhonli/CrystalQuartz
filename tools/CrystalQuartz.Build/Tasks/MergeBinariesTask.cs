@@ -71,18 +71,9 @@ namespace CrystalQuartz.Build.Tasks
 
         private readonly string[] _dotNetCoreLibsCandidates =
         {
-            "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/microsoft.netcore.app/2.0.0/ref/netcoreapp2.0",
-            "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/microsoft.netcore.app/2.0.7/ref/netcoreapp2.0",
-            "/usr/local/share/dotnet/shared/Microsoft.NETCore.App/2.0.0",
-            "/usr/local/share/dotnet/shared/Microsoft.NETCore.App/2.0.7",
-            "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.0/build/netstandard2.0/ref",
-            "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.7/build/netstandard2.0/ref",
-            "/usr/share/dotnet/sdk/NuGetFallbackFolder/microsoft.netcore.app/2.0.0/ref/netcoreapp2.0",
-            "/usr/share/dotnet/sdk/NuGetFallbackFolder/microsoft.netcore.app/2.0.7/ref/netcoreapp2.0",
-            "/usr/share/dotnet/shared/Microsoft.NETCore.App/2.0.0",
-            "/usr/share/dotnet/shared/Microsoft.NETCore.App/2.0.7",
-            "/usr/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.0/build/netstandard2.0/ref",
-            "/usr/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.7/build/netstandard2.0/ref",
+            "C:/PROGRA~1/dotnet/sdk/NuGetFallbackFolder/microsoft.netcore.app/2.1.0/ref/netcoreapp2.1",
+            "C:/PROGRA~1/dotnet/shared/Microsoft.NETCore.App/2.1.0",
+            "C:/PROGRA~1/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.0/build/netstandard2.0/ref"
         };
 
         private readonly SolutionStructure _solution;
@@ -158,7 +149,7 @@ namespace CrystalQuartz.Build.Tasks
 
         private ITask<Nothing> CreateMergeTask(string outputDllName, string[] inputAssembliesNames, string dotNetVersionAlias, string[] libs = null)
         {
-            IDirectory ilMergePackage = (_solution.Src/"packages").AsDirectory().Directories.Last(d => d.Name.StartsWith("ILRepack"));
+            IDirectory ilMergePackage = (_solution.Src.Parent/"tools/packages").AsDirectory().Directories.Last(d => d.Name.StartsWith("ILRepack"));
 
             IDirectory bin = _solution.Artifacts / ("bin_" + dotNetVersionAlias);
 

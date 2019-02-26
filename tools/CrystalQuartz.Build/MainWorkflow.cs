@@ -170,7 +170,7 @@ namespace CrystalQuartz.Build
                     nuspec => new GeneratePackageTask(nuspec)
                     {
                         WorkDirectory = data.Solution.Artifacts,
-                        ToolPath = data.Solution.Src/".nuget"/"NuGet.exe"
+                        ToolPath = data.Solution.Src.Parent/"tools/.nuget"/"NuGet.exe"
                     }, 
                     nuspec => string.Format("Generate NuGet package for {0}", nuspec.NameWithoutExtension)),
                     
@@ -218,7 +218,7 @@ namespace CrystalQuartz.Build
                         package => new ExecTask
                         {
                             WorkDirectory = data.Solution.Artifacts,
-                            ToolPath = data.Solution.Src/".nuget"/"NuGet.exe",
+                            ToolPath = data.Solution.Src.Parent/"tools/.nuget"/"NuGet.exe",
                             Arguments = "push " + package.AbsolutePath + " -Source https://api.nuget.org/v3/index.json -NonInteractive"
                         },
                         package => "Push" + package.NameWithoutExtension),
@@ -238,7 +238,6 @@ namespace CrystalQuartz.Build
 
             var toolPath = "C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/15.0/Bin/MsBuild.exe";
             return toolPath;
-            //return base.GetToolPath(context);
         }
     }
 }
