@@ -74,11 +74,12 @@ namespace Demo.Quartz3.DotNetCore
 
             var scheduler = schedulerFactory.GetScheduler().Result;
 
-            // construct job info
             var jobDetail = JobBuilder.Create<HelloJob>()
-                .WithIdentity("myJob")
+                .WithIdentity("defaultJob")
                 .StoreDurably()
                 .Build();
+
+            scheduler.AddJob(jobDetail, true);
 
             // fire every minute
             var trigger = TriggerBuilder.Create()
@@ -145,32 +146,33 @@ namespace Demo.Quartz3.DotNetCore
 
 
             scheduler.ScheduleJob(jobDetail4, new List<ITrigger>() { trigger4, trigger5 }.AsReadOnly(), false);
-            //            scheduler.ScheduleJob(jobDetail4, trigger5);
+            //scheduler.ScheduleJob(jobDetail4, trigger5);
 
             scheduler.PauseJob(new JobKey("myJob4", "MyOwnGroup"));
             scheduler.PauseTrigger(new TriggerKey("myTrigger3", "DEFAULT"));
-
+            
             return scheduler;
         }
 
-        public class HelloJob : IJob
+    }
+
+    public class HelloJob : IJob
+    {
+        private static readonly Random Random = new Random();
+
+        public Task Execute(IJobExecutionContext context)
         {
-            private static readonly Random Random = new Random();
+            Console.WriteLine("Hello, CrystalQuartz!");
+            var jobDetailJobDataMap = context.MergedJobDataMap;
 
-            public Task Execute(IJobExecutionContext context)
+            foreach (var key in jobDetailJobDataMap.Keys)
             {
-                Console.WriteLine("Hello, CrystalQuartz!");
-                var jobDetailJobDataMap = context.MergedJobDataMap;
+                var jobDataMapItemValue = jobDetailJobDataMap[key];
 
-                foreach (var key in jobDetailJobDataMap.Keys)
-                {
-                    var jobDataMapItemValue = jobDetailJobDataMap[key];
-
-                    Console.WriteLine(key + ": " + jobDataMapItemValue + " (" + jobDataMapItemValue.GetType() + ")");
-                }
-
-                return Task.Delay(TimeSpan.FromSeconds(Random.Next(10, 20)));
+                Console.WriteLine(key + ": " + jobDataMapItemValue + " (" + jobDataMapItemValue.GetType() + ")");
             }
+
+            return Task.Delay(TimeSpan.FromSeconds(Random.Next(10, 20)));
         }
     }
 }
