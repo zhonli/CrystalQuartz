@@ -33,7 +33,7 @@
 
         public IDirectory BuildAssets
         {
-            get { return Src/"CrystalQuartz.Build"/"Assets"; }
+            get { return Root/"tools"/"CrystalQuartz.Build"/"Assets"; }
         }
 
         public IDirectory CrystalQuartz_Application

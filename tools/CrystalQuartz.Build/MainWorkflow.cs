@@ -23,21 +23,27 @@ namespace CrystalQuartz.Build
                 "Init the workflow",
                 context =>
                 {
-                    IDirectory currentDirectory = WorkDirectory.Closest(dir => dir.Name.Equals("src", StringComparison.InvariantCultureIgnoreCase));
+                    IDirectory currentSrcDirectory = WorkDirectory.Closest(dir => dir.Name.Equals("src", StringComparison.InvariantCultureIgnoreCase));
 
-                    if (currentDirectory == null)
+                    if (currentSrcDirectory == null)
                     {
-                        throw new Exception("Could not find Src directory " + WorkDirectory);
-                    }
+                        var toolsDirectory = WorkDirectory.Closest(dir => dir.Name.Equals("tools", StringComparison.InvariantCultureIgnoreCase));
+                        if (toolsDirectory == null)
+                            throw new Exception("Could not find tools directory " + WorkDirectory);
 
-                    IDirectory artifacts = currentDirectory.Parent/"Artifacts";
+                        currentSrcDirectory = toolsDirectory.Parent / "Src";
+                    }
+                    if (currentSrcDirectory == null)
+                        throw new Exception("Could not find Src directory " + WorkDirectory);
+
+                    IDirectory artifacts = currentSrcDirectory.Parent / "Artifacts";
                     artifacts.EnsureExists();
                     artifacts.Files.IncludeByExtension("nupkg", "nuspec").DeleteAll();
 
-                    IDirectory mergedBin = currentDirectory.Parent/"bin"/"Merged";
+                    IDirectory mergedBin = currentSrcDirectory.Parent / "bin" / "Merged";
                     mergedBin.EnsureExists();
 
-                    var solutionStructure = new SolutionStructure(currentDirectory.Parent);
+                    var solutionStructure = new SolutionStructure(currentSrcDirectory.Parent);
 
                     IFile versionNumberFile = solutionStructure.Src / "version.txt";
 
@@ -51,11 +57,11 @@ namespace CrystalQuartz.Build
                 });
 
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var generateCommonAssemblyInfo = Task(
                 "Generate common assembly info",
-                from data in initTask 
-                select new GenerateAssemblyInfo(data.Solution.Src/"CommonAssemblyInfo.cs")
+                from data in initTask
+                select new GenerateAssemblyInfo(data.Solution.Src / "CommonAssemblyInfo.cs")
                 {
                     Attributes =
                     {
@@ -79,7 +85,7 @@ namespace CrystalQuartz.Build
                 from data in initTask
                 select c =>
                 {
-                    (data.Solution.Root/ "_gh-pages-assets").AsDirectory().SearchFilesRecursively().CopyRelativelyTo(data.Solution.Artifacts/"gh-pages");
+                    (data.Solution.Root / "_gh-pages-assets").AsDirectory().SearchFilesRecursively().CopyRelativelyTo(data.Solution.Artifacts / "gh-pages");
                 });
 
             //// ----------------------------------------------------------------------------------------------------------------------------
@@ -89,65 +95,65 @@ namespace CrystalQuartz.Build
                 from data in initTask
                 select new ExecTask
                 {
-                    ToolPath = data.Solution.Src/".nuget"/"NuGet.exe",
-                    Arguments = "restore " + (data.Solution.Src/"CrystalQuartz.sln").AsFile().AbsolutePath + " -Verbosity quiet"
+                    ToolPath = data.Solution.Src / ".nuget" / "NuGet.exe",
+                    Arguments = "restore " + (data.Solution.Src / "CrystalQuartz.sln").AsFile().AbsolutePath + " -Verbosity quiet"
                 }.AsTask());
 
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var buildSolution = Task(
                 "Build solution",
                 from data in initTask
                 select new CustomMsBuildTask
-                    {
-                        ProjectFile = data.Solution.Src/ "CrystalQuartz.sln",
-                        Switches =
+                {
+                    ProjectFile = data.Solution.Src / "CrystalQuartz.sln",
+                    Switches =
                         {
                             MsBuildSwitch.Configuration(data.Configuration),
                             MsBuildSwitch.VerbosityQuiet()
                         }
-                    }
-                        
+                }
+
                 .AsTask(),
-                
+
                 //DependsOn(restoreNugetPackages),
                 DependsOn(generateCommonAssemblyInfo),
                 DependsOn(buildClient));
-            
+
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var buildCoreSolution = Task(
                 "Build Core projects",
                 from data in initTask
                 select new ExecTask
-                    {
+                {
 
-                        ToolPath = "dotnet",
-                        Arguments = "build " + (data.Solution.Src / "CrystalQuartz.AspNetCore" / "CrystalQuartz.AspNetCore.csproj") + " --verbosity quiet --configuration " + data.Configuration
+                    ToolPath = "dotnet",
+                    Arguments = "build " + (data.Solution.Src / "CrystalQuartz.AspNetCore" / "CrystalQuartz.AspNetCore.csproj") + " --verbosity quiet --configuration " + data.Configuration
                 }
-                        
+
                 .AsTask(),
-                
+
                 DependsOn(buildSolution),
                 //DependsOn(restoreNugetPackages),
                 DependsOn(generateCommonAssemblyInfo),
                 DependsOn(buildClient));
-            
+
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var cleanArtifacts = Task(
                 "Clean artifacts",
                 from data in initTask
                 select _ => data.Solution.Artifacts.Files.IncludeByExtension("nupkg", "nuspec").DeleteAll());
 
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var mergeBinaries = Task(
                 "MergeBinaries",
 
                 from data in initTask
                 select new MergeBinariesTask(data.Solution, data.Configuration, data.SkipCoreProject).AsSubflow(),
-                
+
                 DependsOn(buildSolution),
                 DependsOn(buildCoreSolution));
 
@@ -157,12 +163,12 @@ namespace CrystalQuartz.Build
                 "GenerateNuspecs",
                 from data in initTask
                 select new GenerateNuspecsTask(data.Solution, data.Configuration, data.Version + "-alpha", data.SkipCoreProject),
-                
+
                 DependsOn(cleanArtifacts),
                 DependsOn(mergeBinaries));
 
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var buildPackages = Task(
                 "BuildPackages",
                 from data in initTask
@@ -170,19 +176,19 @@ namespace CrystalQuartz.Build
                     nuspec => new GeneratePackageTask(nuspec)
                     {
                         WorkDirectory = data.Solution.Artifacts,
-                        ToolPath = data.Solution.Src.Parent/"tools/.nuget"/"NuGet.exe"
-                    }, 
+                        ToolPath = data.Solution.Src.Parent / "tools/.nuget" / "NuGet.exe"
+                    },
                     nuspec => string.Format("Generate NuGet package for {0}", nuspec.NameWithoutExtension)),
-                    
+
                 DependsOn(generateNuspecs));
 
             //// ----------------------------------------------------------------------------------------------------------------------------
-            
+
             var buildDocs = Task(
                 "BuildDocs",
                 from data in initTask
                 select new CompileDocsTask(data.Solution, data.Version).AsSubflow(),
-                    
+
                 DependsOn(buildClient));
 
             //// ----------------------------------------------------------------------------------------------------------------------------
@@ -218,7 +224,7 @@ namespace CrystalQuartz.Build
                         package => new ExecTask
                         {
                             WorkDirectory = data.Solution.Artifacts,
-                            ToolPath = data.Solution.Src.Parent/"tools/.nuget"/"NuGet.exe",
+                            ToolPath = data.Solution.Root / "tools/.nuget" / "NuGet.exe",
                             Arguments = "push " + package.AbsolutePath + " -Source https://api.nuget.org/v3/index.json -NonInteractive"
                         },
                         package => "Push" + package.NameWithoutExtension),
