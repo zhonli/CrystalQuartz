@@ -74,14 +74,12 @@ namespace CrystalQuartz.Application.Comands
             {
                 Type jobType = Type.GetType(input.JobClass, true);
 
-                /*
                 if (!_allowedJobTypes.Contains(jobType))
                 {
                     output.Success = false;
                     output.ErrorMessage = "Job type " + jobType.FullName + " is not allowed";
                     return;
                 }
-                */
 
                 SchedulerHost.Commander.ScheduleJob(
                     input.Job,

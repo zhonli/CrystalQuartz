@@ -15,6 +15,7 @@ namespace Demo.Quartz3.DotNetCore
 {
     using CrystalQuartz.Application;
     using CrystalQuartz.Core.Domain.ObjectInput;
+    using System.Reflection;
 
     public class Startup
     {
@@ -39,140 +40,74 @@ namespace Demo.Quartz3.DotNetCore
                 app.UseDeveloperExceptionPage();
             }
 
+            var logRepository = log4net.LogManager.GetRepository(Assembly.GetEntryAssembly());
+            log4net.Config.XmlConfigurator.Configure(logRepository, new System.IO.FileInfo("log4net.config"));
+
             var scheduler = CreateScheduler();
-            
+
             app.UseCrystalQuartz(
-                () => scheduler, 
+                () => scheduler,
                 new CrystalQuartzOptions
                 {
                     JobDataMapInputTypes = CrystalQuartzOptions
                         .CreateDefaultJobDataMapInputTypes()
-                        .Concat(new []
+                        .Concat(new[]
                         {
                             new RegisteredInputType(
-                                new InputType("user", "User"), 
+                                new InputType("user", "User"),
                                 null,
                                 new FixedInputVariantsProvider(
                                     new InputVariant("john_smith", "John Smith"),
-                                    new InputVariant("bob_doe", "Bob Doe"))), 
+                                    new InputVariant("bob_doe", "Bob Doe"))),
                         })
-                        .ToArray()
-                    
+                        .ToArray(),
+                    AllowedJobTypes = RegisterJobTypes()
                 });
+
 
             app.UseStaticFiles();
             app.UseMvc();
         }
 
+
+
         private IScheduler CreateScheduler()
         {
-            NameValueCollection properties = new NameValueCollection();
-            properties.Add("test1", "test1value");
-            properties.Add("quartz.scheduler.instanceId", "test|pipe");
 
-            var schedulerFactory = new StdSchedulerFactory();
+            NameValueCollection properties = new NameValueCollection
+            {
+                ["quartz.scheduler.instanceName"] = "TestScheduler",
+                ["quartz.scheduler.instanceId"] = "instance_one",
+                ["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz",
+                ["quartz.threadPool.threadCount"] = "5",
+                ["quartz.jobStore.misfireThreshold"] = "60000",
+                ["quartz.jobStore.type"] = "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz",
+                ["quartz.jobStore.useProperties"] = "false",
+                ["quartz.jobStore.dataSource"] = "default",
+                ["quartz.jobStore.tablePrefix"] = "QRTZ_",
+                ["quartz.jobStore.clustered"] = "true",
+                ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz",
+                ["quartz.dataSource.default.connectionString"] = TestConstants.SqlServerConnectionString,
+                ["quartz.dataSource.default.provider"] = TestConstants.DefaultSqlServerProvider,
+                ["quartz.serializer.type"] = "json"
+            };
+
+            var schedulerFactory = new StdSchedulerFactory(properties);
 
             var scheduler = schedulerFactory.GetScheduler().Result;
 
-            var jobDetail = JobBuilder.Create<HelloJob>()
-                .WithIdentity("defaultJob")
-                .StoreDurably()
-                .Build();
-
-            scheduler.AddJob(jobDetail, true);
-
-            // fire every minute
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity("myTrigger")
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever())
-                .Build();
-
-            scheduler.ScheduleJob(jobDetail, trigger);
-
-            // construct job info
-            var jobDetail2 = JobBuilder.Create<HelloJob>()
-                .WithIdentity("myJob2")
-                .Build();
-
-            // fire every 3 minutes
-            var trigger2 = TriggerBuilder.Create()
-                .WithIdentity("myTrigger2")
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(3))
-                .Build();
-
-            scheduler.ScheduleJob(jobDetail2, trigger2);
-
-            var trigger3 = TriggerBuilder.Create()
-                .WithIdentity("myTrigger3")
-                .ForJob(jobDetail2)
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(100).RepeatForever())
-                //.WithSimpleSchedule(x => x.WithIntervalInMinutes(5).RepeatForever())
-                .Build();
-
-            scheduler.ScheduleJob(trigger3);
-
-            // construct job info
-            var jobDetail4 = JobBuilder.Create<HelloJob>()
-                .WithIdentity("myJob4", "MyOwnGroup")
-                .Build();
-
-            jobDetail4.JobDataMap.Add("key1", "value1");
-            jobDetail4.JobDataMap.Add("key2", "value2");
-            jobDetail4.JobDataMap.Add("key3", 1L);
-            jobDetail4.JobDataMap.Add("key4", 1d);
-            jobDetail4.JobDataMap.Add("key5", new[]
-            {
-                "Test1",
-                "Test2",
-                "Test3"
-            });
-            jobDetail4.JobDataMap.Add("key6", new { FirstName = "John", LastName = "Smith", BirthDate = new DateTime(2011, 03, 08) });
-
-            // fire every hour
-            ITrigger trigger4 = TriggerBuilder.Create()
-                .WithIdentity("myTrigger4", jobDetail4.Key.Group)
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(1))
-                .Build();
-
-            ITrigger trigger5 = TriggerBuilder.Create()
-                .WithIdentity("myTrigger5", jobDetail4.Key.Group)
-                .StartNow()
-                .WithCronSchedule("0 0/5 * * * ?")
-                .Build();
-
-
-            scheduler.ScheduleJob(jobDetail4, new List<ITrigger>() { trigger4, trigger5 }.AsReadOnly(), false);
-            //scheduler.ScheduleJob(jobDetail4, trigger5);
-
-            scheduler.PauseJob(new JobKey("myJob4", "MyOwnGroup"));
-            scheduler.PauseTrigger(new TriggerKey("myTrigger3", "DEFAULT"));
-            
             return scheduler;
         }
 
-    }
-
-    public class HelloJob : IJob
-    {
-        private static readonly Random Random = new Random();
-
-        public Task Execute(IJobExecutionContext context)
+        private Type[] RegisterJobTypes()
         {
-            Console.WriteLine("Hello, CrystalQuartz!");
-            var jobDetailJobDataMap = context.MergedJobDataMap;
-
-            foreach (var key in jobDetailJobDataMap.Keys)
-            {
-                var jobDataMapItemValue = jobDetailJobDataMap[key];
-
-                Console.WriteLine(key + ": " + jobDataMapItemValue + " (" + jobDataMapItemValue.GetType() + ")");
-            }
-
-            return Task.Delay(TimeSpan.FromSeconds(Random.Next(10, 20)));
+            IList<Type> jobTypes = new List<Type>();
+            jobTypes.Add(typeof(Jobs.HelloJob));
+            jobTypes.Add(typeof(Jobs.SimpleRecoveryJob));
+            jobTypes.Add(typeof(Jobs.SimpleRecoveryStatefulJob));
+            return jobTypes.ToArray();
         }
+
     }
+    
 }

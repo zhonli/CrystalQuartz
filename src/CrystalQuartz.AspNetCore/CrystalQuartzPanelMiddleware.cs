@@ -25,12 +25,13 @@ namespace CrystalQuartz.AspNetCore
             _runningApplication = application.Run();
         }
 
-        public async Task Invoke(HttpContext httpContext)
+        public Task Invoke(HttpContext httpContext)
         {
             IRequest request = new AspNetCoreRequest(httpContext.Request.Query, httpContext.Request.HasFormContentType ? httpContext.Request.Form : null);
             IResponseRenderer responseRenderer = new AspNetCoreResponseRenderer(httpContext);
 
             _runningApplication.Handle(request, responseRenderer);
+            return Task.CompletedTask;
         }
     }
 }
